@@ -1,0 +1,47 @@
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="logo-box">
+      <i class="fas fa-user-plus"></i>
+    </div>
+    <h2>Create Account</h2>
+    <p class="subtitle">Join us and start learning today 🌟</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <!-- Name -->
+      <div class="input-group">
+        <i class="fas fa-user icon"></i>
+        <input type="text" formControlName="name" placeholder="Full Name" />
+      </div>
+
+      <!-- Email -->
+      <div class="input-group">
+        <i class="fas fa-envelope icon"></i>
+        <input type="email" formControlName="email" placeholder="Email address" />
+      </div>
+
+      <!-- Password -->
+      <div class="input-group">
+        <i class="fas fa-lock icon"></i>
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          formControlName="password"
+          placeholder="Choose a password"
+        />
+        <i
+          class="fas toggle-eye"
+          [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"
+          (click)="showPassword = !showPassword"
+        ></i>
+      </div>
+
+      <button class="btn-submit" [disabled]="form.invalid">
+        <i class="fas fa-user-plus"></i> Register
+      </button>
+    </form>
+
+    <p class="switch-text">
+      Already have an account?
+      <a routerLink="/login"><i class="fas fa-sign-in-alt"></i> Login here</a>
+    </p>
+  </div>
+</div>

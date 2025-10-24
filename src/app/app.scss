@@ -1,0 +1,4 @@
+router-outlet {
+  position: relative;
+  z-index: 1; /* router content is below */
+}

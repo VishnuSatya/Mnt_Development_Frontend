@@ -1,0 +1,60 @@
+<div class="upload-form">
+  <h2><i class="fas fa-upload"></i> Upload a New Video</h2>
+  <form (ngSubmit)="onUpload()" #uploadForm="ngForm">
+
+    <!-- Title -->
+    <div class="form-group">
+      <label for="title"><i class="fas fa-heading"></i> Video Title</label>
+      <div class="input-icon">
+        <i class="fas fa-text-width"></i>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          [(ngModel)]="video.title"
+          required
+          placeholder="Enter video title"
+        />
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label for="description"><i class="fas fa-align-left"></i> Description</label>
+      <div class="input-icon">
+        <i class="fas fa-pen"></i>
+        <textarea
+          id="description"
+          name="description"
+          [(ngModel)]="video.description"
+          required
+          placeholder="Enter a short description"
+          rows="4"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- File Input -->
+    <div class="form-group">
+      <label for="file"><i class="fas fa-file-video"></i> Select Video</label>
+      <input
+        type="file"
+        id="file"
+        (change)="onFileSelected($event)"
+        accept="video/*"
+        required
+      />
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-container" *ngIf="uploadProgress >= 0">
+      <div class="progress-bar" [style.width.%]="uploadProgress"></div>
+      <span>{{ uploadProgress }}%</span>
+    </div>
+
+    <!-- Upload Button -->
+    <button type="submit">
+      <i class="fas fa-cloud-upload-alt"></i> Upload
+    </button>
+  </form>
+</div>

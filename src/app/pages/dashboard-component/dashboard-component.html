@@ -1,0 +1,23 @@
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <i class="fas fa-graduation-cap"></i> MNT Academy
+    </div>
+    <ul class="sidebar-menu">
+      <li routerLink="videos" routerLinkActive="active">
+        <i class="fas fa-video"></i> View Videos
+      </li>
+      <li routerLink="upload" routerLinkActive="active">
+        <i class="fas fa-upload"></i> Upload Video
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-container">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

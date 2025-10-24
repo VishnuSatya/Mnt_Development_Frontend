@@ -1,0 +1,22 @@
+.main-footer {
+  background: linear-gradient(to right, #004d00, #006600);
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.4);
+  font-family:monospace !important;
+}
+
+.main-footer p {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.social-icons a {
+  color: #e9fbe9;
+  font-size: 20px;
+  transition: color 0.3s, transform 0.3s;
+}
+
+.social-icons a:hover {
+  color: #00ff99;
+  transform: scale(1.2) rotate(10deg);
+}

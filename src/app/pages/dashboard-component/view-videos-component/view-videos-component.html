@@ -1,0 +1,58 @@
+<div class="video-feed">
+  <div *ngFor="let video of videos" class="video-card" (click)="openVideo(video)">
+    <!-- Thumbnail / small video preview -->
+    <video class="video-preview" muted>
+      <source [src]="getVideoUrl(video.filename)" type="video/mp4" />
+    </video>
+
+    <div class="video-info">
+      <h3>{{ video.title }}</h3>
+      <p>Uploaded by: {{ video.uploadedBy?.name || 'Unknown' }}</p>
+      <div class="stats">
+        👍 {{ video.likes?.length || 0 }} | 👎 {{ video.dislikes?.length || 0 }} | 💬 {{ video.comments?.length || 0 }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fullscreen modal -->
+<div class="video-modal" *ngIf="selectedVideo">
+  <div class="modal-content">
+    <!-- Close button -->
+    <span class="close-btn" (click)="closeVideo()">&times;</span>
+
+    <!-- Title above video -->
+    <h2 class="video-title">{{ selectedVideo.title }}</h2>
+
+    <!-- Video -->
+    <video class="video-player" controls autoplay>
+      <source [src]="getVideoUrl(selectedVideo.filename)" type="video/mp4" />
+    </video>
+
+    <p class="uploaded-by">Uploaded by: {{ selectedVideo.uploadedBy?.name || 'Unknown' }}</p>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button (click)="like(selectedVideo._id)">👍 Like ({{ selectedVideo.likes?.length || 0 }})</button>
+      <button (click)="dislike(selectedVideo._id)">👎 Dislike ({{ selectedVideo.dislikes?.length || 0 }})</button>
+    </div>
+
+    <!-- Comments -->
+    <div class="comments">
+      <h4>Comments</h4>
+      <div *ngFor="let c of selectedVideo.comments" class="comment">
+        <p>
+          <b>{{ c.user?.name || 'Anonymous' }}</b>
+          <small>{{ c.createdAt | date: 'short' }}</small>
+        </p>
+        <p>{{ c.text }}</p>
+      </div>
+    </div>
+
+    <!-- Sticky comment box -->
+    <div class="comment-box">
+      <input type="text" [(ngModel)]="newComment[selectedVideo._id]" placeholder="Add a comment..." />
+      <button (click)="addComment(selectedVideo._id)">Post</button>
+    </div>
+  </div>
+</div>
