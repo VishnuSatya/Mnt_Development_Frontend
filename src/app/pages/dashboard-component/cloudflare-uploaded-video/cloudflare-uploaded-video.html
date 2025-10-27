@@ -1,0 +1,70 @@
+<div class="cloudflare-player">
+  <!-- Loading Spinner -->
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading video...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div class="error-message" *ngIf="error">
+    <p>{{ error }}</p>
+    <button (click)="initPlayer()">Retry</button>
+  </div>
+
+  <!-- Video Player -->
+  <div class="video-container">
+    <video #player class="cf-video" [class.hidden]="loading || error" controls playsinline></video>
+    
+    <!-- Player Controls -->
+    <div class="player-controls" *ngIf="!loading && !error">
+      <!-- Quality Selection -->
+      <div class="quality-selector" *ngIf="qualities.length > 0">
+        <select [ngModel]="currentQuality" (ngModelChange)="onQualityChange($event)">
+          <option [value]="i" *ngFor="let quality of qualities; let i = index">
+            {{ quality.label }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Fullscreen Button -->
+      <button class="fullscreen-btn" (click)="toggleFullscreen()">
+        <span *ngIf="!isFullscreen">⤢</span>
+        <span *ngIf="isFullscreen">⤡</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Modern upload UI -->
+  <div class="modern-upload-card">
+    <div class="drop-area" [class.active]="dragActive || selectedFile"
+      (drop)="onDrop($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)">
+      <input id="cf-file" type="file" accept="video/*" (change)="onFileSelected($event)" hidden />
+      <label for="cf-file" class="drop-label">
+        <span class="upload-icon">&#128228;</span>
+        <span *ngIf="!selectedFile">Drag & drop or click to select a video</span>
+        <span *ngIf="selectedFile">Selected: {{ selectedFile.name }}</span>
+      </label>
+      <div class="preview-thumb" *ngIf="previewUrl">
+        <video [src]="previewUrl" width="140" height="90" controls muted></video>
+      </div>
+      <div class="file-error" *ngIf="fileError">{{ fileError }}</div>
+    </div>
+    <input class="title-input" type="text" placeholder="Video title (optional)" #titleInput />
+    <button class="upload-btn" (click)="uploadToCloudflare(titleInput.value)" [disabled]="!selectedFile || uploading">
+      <span *ngIf="!uploading">Upload to Cloudflare</span>
+      <span *ngIf="uploading">Uploading...</span>
+    </button>
+    <div class="progress-bar" *ngIf="uploading">
+      <div class="progress" [style.width.%]="uploadProgress"></div>
+      <span class="progress-label">{{ uploadProgress }}%</span>
+    </div>
+    <div class="result-panel" *ngIf="uploadResult">
+      <span class="result-icon">&#10004;</span>
+      <span>Upload complete!</span>
+      <details>
+        <summary>Show response</summary>
+        <pre>{{ uploadResult | json }}</pre>
+      </details>
+    </div>
+  </div>
+</div>

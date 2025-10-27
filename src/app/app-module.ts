@@ -11,6 +11,7 @@ import { LandingComponent } from './pages/landing-component/landing-component';
 import { DashboardComponent } from './pages/dashboard-component/dashboard-component';
 import { UploadVideoComponent } from './pages/dashboard-component/upload-video-component/upload-video-component';
 import { ViewVideosComponent } from './pages/dashboard-component/view-videos-component/view-videos-component';
+import { CloudflareUploadedVideoComponent } from './pages/dashboard-component/cloudflare-uploaded-video/cloudflare-uploaded-video';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
@@ -31,6 +32,7 @@ import { ToastrModule } from 'ngx-toastr';
     DashboardComponent,
     UploadVideoComponent,
     ViewVideosComponent
+    ,CloudflareUploadedVideoComponent
   ],
   imports: [
     BrowserModule,

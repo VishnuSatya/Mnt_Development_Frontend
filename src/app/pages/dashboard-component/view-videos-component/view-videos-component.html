@@ -24,10 +24,12 @@
     <!-- Title above video -->
     <h2 class="video-title">{{ selectedVideo.title }}</h2>
 
-    <!-- Video -->
-    <video class="video-player" controls autoplay>
-      <source [src]="getVideoUrl(selectedVideo.filename)" type="video/mp4" />
-    </video>
+    <!-- Cloudflare Video Player -->
+    <app-cloudflare-uploaded-video
+      [videoId]="selectedVideo.cloudflareId || videoId"
+      [hlsManifestUrl]="selectedVideo.hlsManifestUrl"
+      [dashManifestUrl]="selectedVideo.dashManifestUrl">
+    </app-cloudflare-uploaded-video>
 
     <p class="uploaded-by">Uploaded by: {{ selectedVideo.uploadedBy?.name || 'Unknown' }}</p>
 
@@ -56,3 +58,5 @@
     </div>
   </div>
 </div>
+
+

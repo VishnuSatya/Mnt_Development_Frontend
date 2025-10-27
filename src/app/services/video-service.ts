@@ -21,6 +21,14 @@ export class VideoService {
     return this.http.request(req);
   }
 
+  uploadToCloudflare(formData: FormData, options: any = {}): Observable<HttpEvent<any>> {
+    const req = new HttpRequest('POST', `${this.api}/upload-cloudflare`, formData, {
+      reportProgress: true,
+      ...options
+    });
+    return this.http.request(req);
+  }
+
    getVideos(): Observable<any> {
     return this.http.get(`${this.api}`);
   }

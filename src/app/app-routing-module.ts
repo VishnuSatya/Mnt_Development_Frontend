@@ -7,6 +7,7 @@ import { DashboardComponent } from './pages/dashboard-component/dashboard-compon
 import { ViewVideosComponent } from './pages/dashboard-component/view-videos-component/view-videos-component';
 import { UploadVideoComponent } from './pages/dashboard-component/upload-video-component/upload-video-component';
 import { AuthGuard } from './guards/auth-guard';
+import { CloudflareUploadedVideoComponent } from './pages/dashboard-component/cloudflare-uploaded-video/cloudflare-uploaded-video';
 
 const routes: Routes = [
    { path: '', component: LandingComponent },
@@ -16,6 +17,7 @@ const routes: Routes = [
     children: [
       { path: 'upload', component: UploadVideoComponent },
       { path: 'videos', component: ViewVideosComponent },
+      {path: 'cloudflare', component: CloudflareUploadedVideoComponent},
       { path: '', redirectTo: 'videos', pathMatch: 'full' } // default dashboard route
     ]
    },

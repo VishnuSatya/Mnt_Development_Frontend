@@ -15,6 +15,7 @@ export class ViewVideosComponent implements OnInit {
   selectedVideo: any = null;
   currentUserId: string | null = null;
   newComment: { [key: string]: string } = {};
+  videoId = 'ceb0811395f68fa1c0c8837344cce884'
 
   constructor(private videoService: VideoService, private authService: AuthService) {}
 
