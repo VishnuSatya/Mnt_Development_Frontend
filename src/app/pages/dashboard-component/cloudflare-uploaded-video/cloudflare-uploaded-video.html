@@ -33,9 +33,14 @@
       </button>
     </div>
   </div>
-
   <!-- Modern upload UI -->
-  <div class="modern-upload-card">
+ 
+</div>
+
+<br><br>
+
+
+ <div class="modern-upload-card">
     <div class="drop-area" [class.active]="dragActive || selectedFile"
       (drop)="onDrop($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)">
       <input id="cf-file" type="file" accept="video/*" (change)="onFileSelected($event)" hidden />
@@ -67,4 +72,3 @@
       </details>
     </div>
   </div>
-</div>

@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'mntangular-g8ezdsasa9deddaw.canadacentral-01.azurewebsites.net'
+  apiUrl: 'mntwebtrail2-aqaydpgeeyb5h5e0.canadacentral-01.azurewebsites.net'
 };
