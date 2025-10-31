@@ -26,7 +26,7 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    // template changed; just assert an <h1> exists in the rendered output
-    expect(compiled.querySelector('h1')).not.toBeNull();
+    // template contains header/footer custom elements; assert header exists
+    expect(compiled.querySelector('app-header-component')).not.toBeNull();
   });
 });

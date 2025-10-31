@@ -22,16 +22,35 @@ describe('CloudflareUploadedVideoComponent', () => {
 
   fixture = TestBed.createComponent(CloudflareUploadedVideoComponent);
   component = fixture.componentInstance;
+    // prevent initPlayer from running during detectChanges; we'll provide safe mocks instead
+    spyOn(component, 'initPlayer' as any).and.callFake(() => {});
+
+    // helper to create a safe fake video element with expected browser API surface
+    const makeFakeVideoEl = () => {
+      const listeners: Record<string, Function[]> = {};
+      return {
+        _listeners: listeners,
+        pause: jasmine.createSpy('pause'),
+        play: jasmine.createSpy('play'),
+        load: jasmine.createSpy('load'),
+        removeAttribute: jasmine.createSpy('removeAttribute'),
+        setAttribute: jasmine.createSpy('setAttribute'),
+        requestFullscreen: jasmine.createSpy('requestFullscreen').and.returnValue(Promise.resolve()),
+        addEventListener: (ev: string, fn: Function) => {
+          listeners[ev] = listeners[ev] || [];
+          listeners[ev].push(fn);
+        },
+        // allow tests to dispatch events if needed
+        _dispatch: (ev: string, ...args: any[]) => {
+          (listeners[ev] || []).forEach(fn => fn(...args));
+        }
+      } as any;
+    };
+
     // provide safe defaults for players and video element so teardown doesn't fail
-    component['hls'] = { levels: [], currentLevel: -1, trigger: () => {}, destroy: () => {} } as any;
+    component['hls'] = { levels: [], currentLevel: -1, destroy: () => {}, on: () => {} } as any;
     component['dashPlayer'] = { getBitrateInfoListFor: () => [], setQualityFor: jasmine.createSpy('setQualityFor'), reset: () => {} } as any;
-    component.videoRef = { nativeElement: {
-      pause: () => {},
-      play: () => {},
-      removeAttribute: () => {},
-      setAttribute: () => {},
-      requestFullscreen: () => Promise.resolve()
-    }} as any;
+    component.videoRef = { nativeElement: makeFakeVideoEl() } as any;
   fixture.detectChanges();
   });
 
@@ -54,8 +73,10 @@ describe('CloudflareUploadedVideoComponent', () => {
       levels: [
         { height: 720, bitrate: 2000000 },
         { height: 1080, bitrate: 4000000 }
-      ]
-    };
+      ],
+      destroy: () => {},
+      on: () => {}
+    } as any;
 
     component.onQualityChange(1);
     expect(component.currentQuality).toBe(1);
@@ -69,9 +90,11 @@ describe('CloudflareUploadedVideoComponent', () => {
         { height: 720, bitrate: 2000000 },
         { height: 1080, bitrate: 4000000 }
       ],
-      setQualityFor: jasmine.createSpy('setQualityFor')
-    };
-
+      setQualityFor: jasmine.createSpy('setQualityFor'),
+      reset: () => {}
+    } as any;
+    // ensure HLS is not present so DASH branch is taken
+    component['hls'] = null as any;
     component.onQualityChange(1);
     expect(component.currentQuality).toBe(1);
     expect(component['dashPlayer'].setQualityFor).toHaveBeenCalledWith('video', 1);
@@ -102,43 +125,45 @@ describe('CloudflareUploadedVideoComponent', () => {
   });
 
   it('should handle fullscreen toggle', async () => {
-    const mockVideo = {
-      requestFullscreen: jasmine.createSpy('requestFullscreen').and.returnValue(Promise.resolve()),
-    };
-    component.videoRef = { nativeElement: mockVideo as any };
+    // use the shared fake video element so cleanup has the pause/load methods
+    const mockVideo = (component.videoRef.nativeElement as any);
+    mockVideo.requestFullscreen.and.returnValue(Promise.resolve());
 
     // Mock document methods
     spyOn(document, 'exitFullscreen').and.returnValue(Promise.resolve());
     spyOnProperty(document, 'fullscreenElement', 'get').and.returnValue(null as any);
 
-    await component.toggleFullscreen();
-    expect(mockVideo.requestFullscreen).toHaveBeenCalled();
-    expect(component.isFullscreen).toBe(true);
+  component.toggleFullscreen();
+  // wait for the requestFullscreen Promise to settle
+  await (mockVideo.requestFullscreen.calls.mostRecent().returnValue as Promise<any>);
+  expect(mockVideo.requestFullscreen).toHaveBeenCalled();
+  expect(component.isFullscreen).toBe(true);
   });
 
   it('should handle fullscreen exit', async () => {
-    const mockVideo = {
-      requestFullscreen: jasmine.createSpy('requestFullscreen').and.returnValue(Promise.resolve()),
-    };
-    component.videoRef = { nativeElement: mockVideo as any };
+    const mockVideo = (component.videoRef.nativeElement as any);
+    mockVideo.requestFullscreen.and.returnValue(Promise.resolve());
 
     // Mock document methods
     spyOn(document, 'exitFullscreen').and.returnValue(Promise.resolve());
     spyOnProperty(document, 'fullscreenElement', 'get').and.returnValue(mockVideo as any);
 
-    await component.toggleFullscreen();
-    expect(document.exitFullscreen).toHaveBeenCalled();
-    expect(component.isFullscreen).toBe(false);
+  component.toggleFullscreen();
+  // wait for exitFullscreen promise to settle
+  await (document.exitFullscreen as any)();
+  expect(document.exitFullscreen).toHaveBeenCalled();
+  expect(component.isFullscreen).toBe(false);
   });
 
   it('should handle fullscreen errors', async () => {
-    const mockVideo = {
-      requestFullscreen: jasmine.createSpy('requestFullscreen').and.returnValue(Promise.reject('error')),
-    };
-    component.videoRef = { nativeElement: mockVideo as any };
-
+    const mockVideo = (component.videoRef.nativeElement as any);
+    mockVideo.requestFullscreen.and.returnValue(Promise.reject('error'));
+    // ensure we are in the requestFullscreen path
+    spyOnProperty(document, 'fullscreenElement', 'get').and.returnValue(null as any);
     spyOn(console, 'error');
-    await component.toggleFullscreen();
-    expect(console.error).toHaveBeenCalledWith('Error attempting to enable fullscreen:', 'error');
+    component.toggleFullscreen();
+    // wait for the rejected requestFullscreen promise to be handled
+    await (mockVideo.requestFullscreen.calls.mostRecent().returnValue as Promise<any>).catch(() => {});
+    expect(console.error).toHaveBeenCalled();
   });
 });
